@@ -220,11 +220,11 @@ included, but GitHub Actions is not currently running on this repository.
 
 | What you see | Cause and fix |
 |---|---|
-| `no working YOUTUBE_API_KEY` followed by `nothing was collected`, exit code 3 | The key is missing, mistyped, or the API is not enabled on its project. Check the line in `.env` (no spaces or quotes around the key), or repeat steps 4 and 5. |
+| `no working YOUTUBE_API_KEY` followed by `nothing was collected`, exit code 3 | The key is missing, mistyped, or the API is not enabled on its project. Check the line in `.env` (no spaces or quotes around the key), or repeat steps 2 and 3 of the README's setup guide. |
 | `youtube: API quota exhausted - continuing with cached data only` | The free daily quota is used up. It resets at midnight Pacific time; run again then. Results already cached are kept. |
 | `youtube: API key rejected (...)` | The key was deleted or restricted to another API. Create a new one or fix its restriction. |
 | `--offline` exits with code 3 | There is no local cache yet. Do one normal run first. |
-| `ModuleNotFoundError: No module named 'requests'` | The virtual environment is not active, or step 3 was skipped. |
+| `ModuleNotFoundError: No module named 'requests'` | The virtual environment is not active, or the install in step 1 was skipped. |
 | `python: command not found` | Use `python3` on macOS or Linux, or `py` on Windows. |
 | PowerShell says running scripts is disabled when activating `.venv` | Run `Set-ExecutionPolicy -Scope Process RemoteSigned` in that window, then activate again. |
 | Exit code 2 with a `config:` message | A value in `config.py` is invalid; the message names it. |

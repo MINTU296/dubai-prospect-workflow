@@ -215,7 +215,8 @@ Chennai, one names a Hyderabad locality without calling it home, and 24 are link
 
 **The shortlist.** Ranked by a stated wish to buy and its specifics, then by location the person states
 themselves. Only the first and third meet both tests; the second names a Hyderabad locality but does not say
-he lives there; the last two are located only by video language. I would hand a sales lead the first three.
+he lives there; the last two are located only by video language. Only the first shows both a wish to buy
+now and a stated home; the third is an existing owner, not someone who says he is buying again.
 
 **Why nobody reaches strong signal.** It needs a wish to buy, a specific, and a stated South India home in the
 same public record. People who comment on these videos ask one short question and rarely say where they live.
