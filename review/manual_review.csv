@@ -1,0 +1,16 @@
+prospect_id,status,note,signal,quote
+YO-905ea4e2,reject,"Read in full: a student comparing a Dubai job offer's salary with rent and food costs. Job context, not a property buyer.",,
+YO-27a3892e,reject,"Tamil, read in full: a rhetorical question objecting to foreigners being allowed to buy in the Gulf. No purchase intent.",,
+YO-43c7a419,reject,"Tamil, read in full: political commentary that money looted in Tamil Nadu is being invested abroad. No purchase intent.",,
+YO-8691ed00,reject,"Read in full: tells another viewer a golden visa is not required. A statement, not their own question.",,
+YO-5ed1a431,reject,"Asks whether the vlogger's own flat is a 1BHK or 2BHK. Curiosity about the video, no sign of their own interest in buying.",,
+YO-05b7f3dd,needs_validation,Missed by the keyword rules because of a typo: a rental-yield question.,buying_question,What is the tenyal yield
+YO-190c1c97,needs_validation,"Malayalam, romanised: says he will contact the presenter in 1-2 years and that buying one seems a good idea. His other comment, a reply joking that those who can afford it may buy, is not the evidence.",wants_to_buy+timeline,Oru 1-2 yearsil sai bro ye contact cheyyaam
+YO-236924e9,needs_validation,"Asks whether a buyer may pass an off-plan unit and its remaining instalments to another buyer. A long comment, which the keyword rules treat as commentary.",buying_question,is it allowed??
+YO-25fb9c7b,needs_validation,"Telugu: says they are now wondering whether to buy in Dubai instead of Kokapet, a Hyderabad locality they name but do not state as their home.",wants_to_buy+comparison,దుబాయ్ లో కొందామా అని ఆలోచనలో పడిపోయా
+YO-8fc79c98,needs_validation,"Telugu, romanised: asks whether a buyer keeps ownership rights over the house for ever.",buying_question,House konte eppatiki manake rights untaya
+YO-b0b9b778,needs_validation,"Says 'I am invest 3 cr property' and asks what rent to expect: intent and a stated amount, in broken English.",wants_to_buy+budget,I am invest 3 cr property
+YO-3e443795,reject,"Read in full: a long comment comparing tax levels in Germany, Denmark and India. The '5 crore' is a population figure, not a budget. No buying interest.",,
+YO-7fa7837f,reject,Read in full: a challenge put to the presenter in the second person under a video critical of Dubai property ('My Question is very simple when you invest ...'). No sign the writer is buying.,,
+YO-56b208a1,reject,"Tamil, read in full: a political jibe asking how much the presenter took from a party. Not a price enquiry.",,
+YO-8dfc65bd,reject,Read in full: praise for a company named in the video. Not selling anything and not buying.,,

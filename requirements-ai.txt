@@ -1,0 +1,3 @@
+# Only needed for the optional AI reading stage (python run.py --ai-read)
+-r requirements.txt
+anthropic>=1.0
