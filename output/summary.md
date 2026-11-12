@@ -13,24 +13,30 @@
 | duplicate records collapsed | 153 |
 | unique authors about dubai property | 2172 |
 | records merged into existing author | 442 |
-| candidate channels declaring a country | 17 of 217 |
+| commenters read by ai | 2144 |
+| buying intent found only by ai | 5 |
+| candidate channels declaring a country | 17 of 223 |
 | candidate channels declaring a country outside india | 9 |
-| manual review decisions applied | 19 |
+| manual review decisions applied | 22 |
 | video creators removed | 27 |
-| irrelevant authors removed no signal | 1928 |
-| candidates discovered | 217 |
-| candidates under videos not about dubai | 19 |
+| irrelevant authors removed no signal | 1922 |
+| candidates discovered | 223 |
+| candidates under videos not about dubai | 20 |
 | strong signal | 0 |
-| needs validation | 26 |
-| reject | 191 |
-| strong plus needs validation | 26 |
+| needs validation | 27 |
+| reject | 196 |
+| strong plus needs validation | 27 |
 | meet both tests in their own words | 1 |
-| candidates in sheet | 217 |
+| candidates in sheet | 223 |
+| ai reader model | claude-opus-5-5 |
+| ai reader requests | 0 |
+| ai reader failed batches | 0 |
+| ai reader quotes rejected | 0 |
 
 ## Qualified + to-validate prospects by state
 
 - unknown - inferred: Tamil Nadu (language only): 16
-- unknown - inferred: Kerala (language only): 3
+- unknown - inferred: Kerala (language only): 4
 - unknown - inferred: Telangana / Andhra Pradesh (language only): 3
 - Tamil Nadu: 2
 - unknown - inferred: Hyderabad, Telangana (place mentioned, not stated as home): 1
@@ -39,14 +45,16 @@
 ## Why records were rejected
 
 - 130 x Only asks for a price, details or a contact, and gives no location - nothing to qualify on.
-- 18 x Commented under a video that is not about Dubai property (the creator's own comments say the vi
-- 6 x Reply in a discussion with another commenter; no clear purchase enquiry of their own.
+- 19 x Commented under a video that is not about Dubai property (the creator's own comments say the vi
+- 8 x Reply in a discussion with another commenter; no clear purchase enquiry of their own.
 - 6 x Agent/broker/seller language (offers services or solicits contact).
 - 6 x The handle reads as a business name (property, realty, consultancy and the like), not a private
 - 3 x Their public channel country is UAE, outside India, and they state no South India base.
 - 1 x States they live/work in Dubai with no stated South India base.
+- 1 x [Manual review] Malayalam, read in full: says he is a Singapore citizen interested in Dubai pro
 - 1 x [Manual review] Tamil, read in full: a rhetorical question objecting to foreigners being allowe
 - 1 x [Manual review] Read in full: a viewer disputing the video with yield figures. He mentions what
+- 1 x [Manual review] Read in full: a real question about passing on an off-plan unit, but he writes 
 - 1 x [Manual review] Asks whether the vlogger's own flat is a 1BHK or 2BHK. Curiosity about the vide
 - 1 x Critic/sceptic of Dubai property with no purchase intent.
 - 1 x [Manual review] Read in full: a challenge put to the presenter in the second person under a vid
