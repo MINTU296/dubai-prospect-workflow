@@ -165,7 +165,9 @@ def apply_reading(p, label):
     reading that the person states a home outside South India, becomes a flag in classify()."""
     p["read"] = label
     marker = READ_MARKER.get(label.get("intent"))
-    if marker and label.get("confidence") in ("high", "medium") and not (p["markers"] & T.OWN_WORDS):
+    # Only a high-confidence reading adds intent. In the first live run the medium-confidence
+    # additions were mostly vague or off-target on a strict read.
+    if marker and label.get("confidence") == "high" and not (p["markers"] & T.OWN_WORDS):
         p["markers"] = set(p["markers"]) | {marker, "read_by_ai"}
         p["tier"], p["score"] = T.intent_tier(p["markers"])
     if (label.get("home") and label.get("home_in_south_india") is False

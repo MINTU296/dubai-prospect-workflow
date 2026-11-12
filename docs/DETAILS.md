@@ -88,15 +88,15 @@ browse, choose sources or contact anyone. What it may and may not do is fixed in
 | Guardrail | How it is enforced |
 |---|---|
 | No invented evidence | Every finding must quote the comment. A quote that is not an exact substring of that person's comments is discarded in code. |
-| Limited authority | Only a high- or medium-confidence reading can add intent, and only up to `needs_validation`. It can never produce a `strong_signal`. |
+| Limited authority | Only a high-confidence reading can add intent, and only up to `needs_validation`. It can never produce a `strong_signal`. |
 | Visible provenance | Such a row carries the marker `read_by_ai`, a reason that says so, and the reading itself in the `ai_reading` column. |
 | Rules keep the veto | Every disqualifier still applies. Where the model disagrees with a row the rules qualified, or reports a stated home outside South India, the row is flagged for a human, never changed or rejected. |
 | Minimal data sent | Only redacted comment text and the video title. No handle, channel id or link; @mentions of other viewers are replaced before sending. |
 | Repeatable | Readings are cached per distinct text, model and prompt version; identical comments are read once. |
 | Safe to fail | No key, a rejected key, a network error, a declined request or a malformed answer skips that batch; the run continues on the rules. |
 
-**Status: built and tested against a stand-in for the API, not yet run against the live API.** The committed
-results do not use it.
+**Status: run live for the committed results** (2,144 commenters, 104 requests, no failures). Only a
+high-confidence reading may add intent; the README describes what it found.
 
 ### Other rules
 

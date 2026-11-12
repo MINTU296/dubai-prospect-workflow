@@ -8,7 +8,7 @@ language, and an English gloss.
 Guardrails:
 - the model must quote the comment for every finding, and a finding whose quote is not an
   exact substring of that person's comments is discarded here, in code;
-- only a reading the model marks high or medium confidence can add intent; it can raise someone
+- only a reading the model marks high confidence can add intent; it can raise someone
   to `needs_validation` at most, never to `strong_signal`, and every such row says the intent
   came from the AI reader (see qualify.apply_reading);
 - the rules still decide every rejection; where the reader disagrees with a rule-qualified

@@ -9,18 +9,18 @@ anything is stored.
 
 ## Result at a glance
 
-Run of 11 November 2026, YouTube only.
+Run of 11 November 2026, YouTube only, with the AI reading stage on.
 
 | | Count |
 |---|---|
-| Candidates discovered | **217** |
+| Candidates discovered | **223** |
 | Meet both tests in their own words (a wish to buy now and a South India home they state) | **1** |
 | Strong signal | **0** |
-| Needs validation | **26** |
-| Rejected | **191** |
+| Needs validation | **27** |
+| Rejected | **196** |
 
-**One person genuinely qualifies on both tests, and does not reach the strong-signal bar.** The other 25 in
-"needs validation" show buying interest in their own words, or own property and live in Chennai, but for 22 of
+**One person genuinely qualifies on both tests, and does not reach the strong-signal bar.** The other 26 in
+"needs validation" show buying interest in their own words, or own property and live in Chennai, but for 23 of
 them nothing they wrote says where they live: they are linked to South India only by the language of the video
 they commented on. This is a working method and a short list worth a first look, not a list of leads.
 
@@ -53,20 +53,20 @@ South India.
 A job title, wealth or a location on its own never qualifies anyone. The full rules are in
 [`docs/DETAILS.md`](docs/DETAILS.md).
 
-**Discovered versus qualified.** 3,226 comments from 2,612 people → **217 candidates** → **26 need validation**,
-of whom **1 meets both tests**; 0 strong signal; 191 rejected.
+**Discovered versus qualified.** 3,226 comments from 2,612 people → **223 candidates** → **27 need validation**,
+of whom **1 meets both tests**; 0 strong signal; 196 rejected.
 
 **Limitations.**
 
-- **Location is the weak link.** Only 2 of the 26 say where they live (both Chennai), and one of those is an
-  existing owner, not someone buying now. For 22 the only link is the video's language, and a Tamil or Malayalam speaker may well live in the Gulf: of the candidates
+- **Location is the weak link.** Only 2 of the 27 say where they live (both Chennai), and one of those is an
+  existing owner, not someone buying now. For 23 the only link is the video's language, and a Tamil or Malayalam speaker may well live in the Gulf: of the candidates
   whose channel declares a country, about half declare one outside India.
 - **Evidence per person is thin.** Most rows are one short comment. Identity, finances and residence are
   unverified and listed per row.
-- **Concentrated source.** YouTube only. 97 of the 217 candidates come from one channel and 130 from three
+- **Concentrated source.** YouTube only. 97 of the 223 candidates come from one channel and 131 from three
   videos. No one who needs validation is linked to Karnataka.
 - **Keyword rules miss regional-language buyers.** Against an independent read they found fewer than half of
-  the people showing buying intent. Six of the 26 were added by a recorded review decision.
+  the people showing buying intent. Seven of the 27 were added by a recorded review decision.
 - **Built with an AI coding assistant**, as the brief allows, including the review decisions. They are one
   reviewer's judgement and have not been checked by a speaker of these languages.
 
@@ -78,15 +78,16 @@ flowchart TD
     B --> C["Read public comments<br/>3,226 comments from 2,612 people"]
     C --> D["Clean and redact<br/>phones, e-mails, links removed"]
     D --> E["One record per person<br/>2,172 under a video in scope"]
-    E --> F{"Did they ask or say something<br/>a seller could act on?"}
-    F -->|"No: 1,928 people, plus 27 video creators"| X["Removed as irrelevant<br/>counted, not listed"]
-    F -->|Yes| G["217 candidates"]
+    E --> R["AI reading stage<br/>a Claude model reads all 2,144 commenters<br/>and must quote the comment"]
+    R --> F{"Did they ask or say something<br/>a seller could act on?"}
+    F -->|"No: 1,922 people, plus 27 video creators"| X["Removed as irrelevant<br/>counted, not listed"]
+    F -->|Yes| G["223 candidates"]
     G --> H["Score buying intent and South India evidence<br/>look up the country each channel declares"]
     H --> I["Automatic status and reason"]
     I --> J["Review decisions, recorded in files<br/>each addition must quote the comment"]
     J --> K["0 strong signal"]
-    J --> L["26 needs validation<br/>1 meets both tests"]
-    J --> M["191 rejected"]
+    J --> L["27 needs validation<br/>1 meets both tests"]
+    J --> M["196 rejected"]
     K --> N["Export: CSV, XLSX, shortlist, summary, manifest"]
     L --> N
     M --> N
@@ -99,7 +100,7 @@ flowchart TD
 | One record per person, status and reason | [`prospector/qualify.py`](prospector/qualify.py) |
 | Processing order, review decisions, shortlist | [`prospector/pipeline.py`](prospector/pipeline.py) |
 | CSV, XLSX, summary, manifest | [`prospector/export.py`](prospector/export.py) |
-| Optional AI reading stage (off by default, not used for these results) | [`prospector/ai_reader.py`](prospector/ai_reader.py) |
+| AI reading stage (optional; on for these results) | [`prospector/ai_reader.py`](prospector/ai_reader.py) |
 
 ## Setup guide
 
@@ -170,6 +171,7 @@ python -m pytest tests -q
 |---|---|
 | `python run.py` | Collect, qualify, export. Reuses cached answers under 24 hours old. |
 | `python run.py --offline` | Re-qualify from your local cache: no network, no quota. |
+| `python run.py --ai-read` | Also have a Claude model read every commenter. Needs `ANTHROPIC_API_KEY` in `.env` and `pip install -r requirements-ai.txt`; the run for these results cost about $5. |
 | `python run.py --refresh` | Ignore the cache and fetch again. |
 | `python run.py --as-of 2026-11-11` | Make freshness decisions as of a given date. |
 | `python run.py --find "some words"` | Show the id and status of everyone whose comment contains the words. |
@@ -178,7 +180,7 @@ python -m pytest tests -q
 
 **Re-runnable, not byte-reproducible.** The cache is not in the repository and YouTube's search results change,
 so a fresh run finds a somewhat different set of people. The committed `output/` reproduces exactly from the
-author's cache; `run_manifest.json` records the commit, settings and checksums.
+author's cache with `python run.py --offline --ai-read --as-of 2026-11-11`; `run_manifest.json` records the commit, settings and checksums.
 
 ## Results
 
@@ -188,29 +190,29 @@ author's cache; `run_manifest.json` records the commit, settings and checksums.
 | People who wrote them | 2,612 |
 | People with a comment under a Dubai-property video that is short or on topic | 2,172 |
 | Video creators' own comments removed | 27 |
-| Removed as irrelevant (asked nothing, no wish to buy) | 1,928 |
-| **Candidates discovered** | **217** |
+| Removed as irrelevant (asked nothing, no wish to buy) | 1,922 |
+| **Candidates discovered** | **223** |
 | `strong_signal` | **0** |
-| `needs_validation` | **26** |
+| `needs_validation` | **27** |
 | ...of whom meet both tests in their own words | **1** |
-| `reject` | **191** |
+| `reject` | **196** |
 
-**The 26 who need validation.** Twelve say they want to buy or invest (two state an amount: 25 lakh and
-3 crore), twelve asked a buying question such as "How much down payment?", one says he already bought and
+**The 27 who need validation.** Twelve say they want to buy or invest (two state an amount: 25 lakh and
+3 crore), thirteen asked a buying question such as "How much down payment?", one says he already bought and
 lives in Chennai, and one wrote "Interested" under a video about a Dubai property show in Hyderabad. Twenty
-were found by the rules and six by a review decision. Location: two state Chennai, one names a Hyderabad
-locality without calling it home, one is tied to Hyderabad only by that event video, and 22 are linked only by
-video language (Tamil 16, Malayalam 3, Telugu 3). Fourteen of the 26 commented on one Tamil realtor's channel.
+were found by the rules and seven by a review decision. Location: two state Chennai, one names a Hyderabad
+locality without calling it home, one is tied to Hyderabad only by that event video, and 23 are linked only by
+video language (Tamil 16, Malayalam 4, Telugu 3). Fourteen of the 27 commented on one Tamil realtor's channel.
 
-**The 191 rejected.**
+**The 196 rejected.**
 
 | Reason | Count |
 |---|---|
 | Only asked for a price, details or a contact, and gave no location | 130 |
-| Commented under a video that is about a villa in Ajman, not Dubai | 18 |
+| Commented under a video that is about a villa in Ajman, not Dubai | 19 |
 | Seller or agent, by what they wrote (6) or by a business-name handle (6) | 12 |
-| Replied to another viewer rather than the creator | 6 |
-| Rejected by a review decision | 13 |
+| Replied to another viewer rather than the creator | 8 |
+| Rejected by a review decision | 15 |
 | Channel declares a country outside India | 5 |
 | Says they live elsewhere, owner with no sign of buying again, advice-giver, critic, job-seeker, no South India link | 7 |
 
@@ -222,7 +224,7 @@ India, and the fifth is an existing owner in Chennai, not someone who says he is
 **Why nobody reaches strong signal.** It needs a wish to buy, a specific, and a stated South India home in the
 same public record. People who comment on these videos ask one short question and rarely say where they live.
 Three further checks for location were measured and found nearly empty: the country a channel declares (17 of
-217 declare one), the channel description (3 candidates named a South India place, all three rejected for
+223 declare one), the channel description (3 candidates named a South India place, all three rejected for
 other reasons), and an independent read of every comment for a stated home (10 found, none with buying
 intent).
 
@@ -243,9 +245,17 @@ intent).
 
   Every input those reviews found misclassified is now a test. Each review still found new phrasings the
   keyword rules got wrong, so expect more: that is the limit of keyword rules.
-- **Not checked.** No speaker of Tamil, Malayalam, Telugu or Kannada has read the regional-language rows. The
-  roughly 600 commenters added by the last run were not part of the independent read. The optional AI reading
-  stage has never been run against the live API.
+- **AI reading stage, run live.** A Claude model (`claude-opus-5-5`) read all 2,144 commenters in 104 requests
+  in about five minutes, with no failed request and no quote that failed the exact-match check.
+  - It agrees with the sheet: it reads buying interest in 26 of the 27 rows to validate (the 27th is the
+    "Interested" under the Hyderabad event video), and reads 129 of the 130 price-only rejects the same way.
+  - It found buying intent in 28 people the rules had missed. On a strict read most of the medium-confidence
+    ones were vague or off-target, so only a high-confidence reading may add intent. That left five, and none
+    became a row to validate: two are replies between viewers, one is under the Ajman video, one is a
+    Singapore citizen and one is under a video about the UAE generally. One medium-confidence reading (a
+    Malayalam question about paying 63,000 dirhams) was accepted by a review decision.
+  - Every row's reading, quote and English translation is in the `ai_reading` column.
+- **Not checked.** No speaker of Tamil, Malayalam, Telugu or Kannada has read the regional-language rows.
 
 ## Privacy and compliance
 
@@ -255,7 +265,7 @@ intent).
   is kept, because it is part of the public comment.
 - **Minimal lookups.** For a candidate's channel only the declared country code is requested and cached.
 - **Retention.** Cached text older than 30 days is deleted on the next online run; `--purge-cache` deletes it
-  at once. The committed `output/` holds 217 public handles with a judgement against each, exists for this
+  at once. The committed `output/` holds 223 public handles with a judgement against each, exists for this
   evaluation only, and should be deleted afterwards.
 - **Removal on request.** A row with status `exclude` in `review/manual_review.csv` removes that person from
   every output.
@@ -268,5 +278,5 @@ intent).
 1. A consented validation step, such as a form linked from a developer's own channel, before any record is
    treated as a lead. It is also the only way to establish residence.
 2. Have a speaker of each language read the regional-language rows.
-3. Run the AI reading stage against the live API and compare it with the independent read.
+3. Compare the AI reading stage's translations with a speaker's on a sample.
 4. More Kannada and Telugu sources; the current ones are thin.
