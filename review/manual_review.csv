@@ -6,11 +6,15 @@ YO-8691ed00,reject,"Read in full: tells another viewer a golden visa is not requ
 YO-5ed1a431,reject,"Asks whether the vlogger's own flat is a 1BHK or 2BHK. Curiosity about the video, no sign of their own interest in buying.",,
 YO-05b7f3dd,needs_validation,Missed by the keyword rules because of a typo: a rental-yield question.,buying_question,What is the tenyal yield
 YO-190c1c97,needs_validation,"Malayalam, romanised: says he will contact the presenter in 1-2 years and that buying one seems a good idea. His other comment, a reply joking that those who can afford it may buy, is not the evidence.",wants_to_buy+timeline,Oru 1-2 yearsil sai bro ye contact cheyyaam
-YO-236924e9,needs_validation,"Asks whether a buyer may pass an off-plan unit and its remaining instalments to another buyer. A long comment, which the keyword rules treat as commentary.",buying_question,is it allowed??
 YO-25fb9c7b,needs_validation,"Telugu: says they are now wondering whether to buy in Dubai instead of Kokapet, a Hyderabad locality they name but do not state as their home.",wants_to_buy+comparison,దుబాయ్ లో కొందామా అని ఆలోచనలో పడిపోయా
 YO-8fc79c98,needs_validation,"Telugu, romanised: asks whether a buyer keeps ownership rights over the house for ever.",buying_question,House konte eppatiki manake rights untaya
 YO-b0b9b778,needs_validation,"Says 'I am invest 3 cr property' and asks what rent to expect: intent and a stated amount, in broken English.",wants_to_buy+budget,I am invest 3 cr property
-YO-3e443795,reject,"Read in full: a long comment comparing tax levels in Germany, Denmark and India. The '5 crore' is a population figure, not a budget. No buying interest.",,
 YO-7fa7837f,reject,Read in full: a challenge put to the presenter in the second person under a video critical of Dubai property ('My Question is very simple when you invest ...'). No sign the writer is buying.,,
 YO-56b208a1,reject,"Tamil, read in full: a political jibe asking how much the presenter took from a party. Not a price enquiry.",,
 YO-8dfc65bd,reject,Read in full: praise for a company named in the video. Not selling anything and not buying.,,
+YO-836d8665,reject,"Read in full: 'Generally, how much does a 2bhk start from' is a price question, the kind rejected elsewhere, and it is 21 months old.",,
+YO-6d252fa0,reject,"Malayalam, read in full: asks the presenter to make a video about the golden visa. A request for content, not a buying question.",,
+YO-2a7a889d,reject,"Tamil, read in full: asks the creator to change the price shown on the video thumbnail. Not a price enquiry.",,
+YO-f9985849,reject,"Tamil, read in full: an advert for a stock-tips channel. Not a property enquiry.",,
+YO-0b9968f4,reject,Read in full: a viewer disputing the video with yield figures. He mentions what developers offer; he is not selling.,,
+YO-3e5b12af,needs_validation,"Telugu, romanised: asks 'how should one invest??'. Written as a reply under another comment, but the creator answered it in the thread with 'Contact me'.",wants_to_buy,Ala invest cheyali??

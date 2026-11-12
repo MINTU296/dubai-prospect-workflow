@@ -193,7 +193,7 @@ def apply_review_signal(p, signal, quote=""):
         source = next((s for s in p["signals"] if quote in s["text"]), None)
         if source is None:
             return False
-        p["best"] = source
+        p["best"], p["review_quote"] = source, quote
     parts = [x.strip() for x in signal.split("+")]
     if not (p["markers"] & T.OWN_WORDS):
         p["markers"] = set(p["markers"]) | {READ_MARKER[parts[0]], "found_on_review"} | set(parts[1:])
@@ -341,7 +341,7 @@ def classify(p, today=None):
         return "reject", "Says they already own property there; no sign of buying again and no stated South India base.", unv
     if tier == "weak" and "target_dubai" not in mk:
         return "reject", "Only a passing or general remark - no enquiry aimed at buying Dubai property.", unv
-    if tier == "weak" and LOC_RANK[loc["tier"]] <= LOC_RANK["mention"]:
+    if tier == "weak" and loc["tier"] != "context" and LOC_RANK[loc["tier"]] <= LOC_RANK["mention"]:
         return "reject", "Only asks for a price, details or a contact, and gives no location - nothing to qualify on.", unv
 
     # ---- needs validation / strong -----------------------------------------
@@ -408,6 +408,17 @@ def prospect_id(p):
     return p["platform"][:2].upper() + "-" + hashlib.sha1(str(p["author_id"]).encode()).hexdigest()[:8]
 
 
+FORWARD_INTENT = {"purchase_intent", "buying_question", "budget"}
+
+
+def meets_both(p):
+    """Not rejected, says in their own words they are looking to buy, and states a South India home.
+
+    Someone who only says they already bought has shown no interest in buying now, so does not count."""
+    return bool(p.get("status") != "reject" and p["markers"] & FORWARD_INTENT
+                and p["loc"]["tier"] in ("explicit", "community"))
+
+
 def rank_key(p, today=None):
     """Shortlist order: a stated wish to buy and specifics, plus location the person states themselves.
 
@@ -416,17 +427,33 @@ def rank_key(p, today=None):
     less than someone who wants to buy now, and a signal older than the freshness limit is marked down."""
     mk = p["markers"]
     own_location = {"explicit": 5, "community": 4, "mention": 1}.get(p["loc"]["tier"], 0)
-    intent = 3 if "purchase_intent" in mk else 1.5 if "owner_investor" in mk else 1 if "buying_question" in mk else 0
+    intent = 3 if "purchase_intent" in mk else 1 if "buying_question" in mk else 0.5 if "owner_investor" in mk else 0
     specifics = min(3, len(mk & T.SPECIFICS))
     age = months_old(p["best"]["date"], today)
     stale = 3 if age > config.FRESH_MONTHS else 0
-    return intent * 2 + specifics * 2 + own_location + (1 if "says_india" in mk else 0) - stale - age / 12.0
+    return ((100 if meets_both(p) else 0)        # both tests in their own words always comes first
+            + intent * 2 + specifics * 2 + own_location + (1 if "says_india" in mk else 0) - stale - age / 12.0)
 
 
 COLUMNS = ["prospect_id", "public_name_or_handle", "platform", "city", "state", "location_confidence",
            "inferred_region", "channel_country", "location_evidence", "source_link", "signal_date", "signal_context", "evidence_of_interest",
            "intent_level", "intent_markers", "qualification_status", "meets_both_tests", "qualification_reason",
            "unverified_information", "review", "ai_reading", "signals_by_author", "other_source_links"]
+
+
+def _evidence(p):
+    """The person's own words: the best comment, anything else under the same video that adds to it,
+    the comment that states their home if it is a different one, and the reviewer's quote if the
+    shortened text does not already show it."""
+    best = p["best"]
+    parts = [_quote(best)] + [_quote(s, 160) for s in p.get("also", [])[:2]]
+    home = next((s for s in p["signals"] if s is not best and s["loc"]["tier"] == "explicit" and s not in p.get("also", [])), None)
+    if home is not None and p["loc"]["tier"] == "explicit":
+        parts.append(_quote(home, 160))
+    q = p.get("review_quote") or ""
+    if q and not any(q in part for part in parts):
+        parts.append("…" + q)
+    return parts
 
 
 def to_row(p):
@@ -438,7 +465,7 @@ def to_row(p):
     weak = loc["tier"] not in ("explicit", "community")
     region = ", ".join(x for x in (loc["city"], loc["state"]) if x)
     how = {"context": "video audience only", "language": "language only", "mention": "place mentioned, not stated as home"}.get(loc["tier"], "")
-    both = p["status"] != "reject" and p["tier"] in ("medium", "strong") and not weak
+    both = meets_both(p)
     return {
         "prospect_id": p.get("id") or prospect_id(p),
         "public_name_or_handle": p["name"],
@@ -452,7 +479,7 @@ def to_row(p):
         "source_link": best["url"],
         "signal_date": best["date"],
         "signal_context": (best["context"] + (" - " + best["context_title"][:90] if best.get("context_title") else "")),
-        "evidence_of_interest": " / ".join([_quote(best)] + [_quote(s, 160) for s in p.get("also", [])[:2]]),
+        "evidence_of_interest": " / ".join(_evidence(p)),
         "intent_level": p["tier"] or "none",
         "intent_markers": ", ".join(sorted(m for m in p["markers"] if not m.startswith("NEG_"))),
         "qualification_status": p["status"],

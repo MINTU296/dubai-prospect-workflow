@@ -252,7 +252,7 @@ def channel_countries(api_key, cache_dir, channel_ids, offline=False, refresh=Fa
     now, stored = time.time(), cache.read_json(path)
     known = {k: v for k, v in (stored if isinstance(stored, dict) else {}).items()
              if isinstance(v, dict) and isinstance(v.get("t"), (int, float)) and isinstance(v.get("c"), str)
-             and now - v["t"] < config.CACHE_RETENTION_DAYS * 86400}
+             and (yt.offline or now - v["t"] < config.CACHE_RETENTION_DAYS * 86400)}   # an offline re-run changes nothing
     ids = sorted({i for i in channel_ids if isinstance(i, str) and i})
     ttl = None if config.CACHE_TTL_HOURS is None else config.CACHE_TTL_HOURS * 3600
     need = [i for i in ids if refresh or i not in known or (ttl is not None and now - known[i]["t"] >= ttl)]
@@ -270,7 +270,7 @@ def channel_countries(api_key, cache_dir, channel_ids, offline=False, refresh=Fa
                 c = got.get(i, "")
                 known[i] = {"c": c.upper() if isinstance(c, str) else "", "t": now}
             changed = True
-    if changed or (isinstance(stored, dict) and len(known) != len(stored)):
+    if changed or (not yt.offline and isinstance(stored, dict) and len(known) != len(stored)):
         cache.write_json_atomic(path, known)
     return {i: known[i]["c"] for i in ids if i in known and known[i]["c"]}, yt.units
 

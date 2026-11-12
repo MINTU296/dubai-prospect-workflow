@@ -107,7 +107,7 @@ _IAM_VERB = (r"\b(?:i\s*am|i'm|im|iam|i\s+m|we\s*are|we're|am)\s+(?:currently\s+
              r"(?:living|staying|residing|working|settled|based)\s+(?:in\s+|at\s+)?$")
 # romanised and native first-person pronouns: "naan Madurai la irukken", "njan Kochi il aanu",
 # "nenu Hyderabad nundi", "naanu Bangalore alli", "நான் மதுரையில் இருக்கிறேன்"
-_REGIONAL_I = (r"(?:\b(?:naan|nan|naa|naanga|njan|nyan|njangal|nenu|nen|memu|naanu|nanu|naavu)\b|நான்|நாங்கள்|ഞാൻ|ഞങ്ങൾ|నేను|మేము|ನಾನು|ನಾವು)"
+_REGIONAL_I = (r"(?:\b(?:naan|nan|naanga|njan|njn|nyan|njangal|nenu|nen|memu|naanu|nanu|naavu)\b|நான்|நாங்கள்|ഞാൻ|ഞങ്ങൾ|నేను|మేము|ನಾನು|ನಾವು)"
                r"\s+(?:\S+\s+){0,2}$")
 _FROM = r"(?:^|[.!?\n,;:(\-])\s*from\s+(?:the\s+)?$"      # "Interested, from Kochi" - not "investors from Kochi"
 _PRE_SELF = re.compile(f"(?:{_RESIDE}|{_IAM}|{_HERE}|{_IAM_VERB}|{_REGIONAL_I})", re.I)
@@ -116,14 +116,21 @@ _NEGATED = re.compile(r"\b(?:not|never|no\s+longer|don'?t|do\s+not|isn'?t|aren'?
 # "Chennai based" only describes the author when the author is the subject ("I am a Chennai-based investor")
 _POST_SELF = re.compile(r"^\s*(?:-\s*)?(?:based|resident|native|here\b|guy|person|folk|ite\b)", re.I)
 # romanised "am in X": "Abudhabi anu" (Malayalam), "Chennai la irukken" (Tamil), "Hyderabad lo unnanu" (Telugu)
-_POST_REGIONAL = re.compile(r"^\s*(?:il|yil|la|le|lo|alli)?\s*(?:anu|aanu|aan|irukken|irukkiren|irukkom|unnanu|unnam|iddini|iddivi)\b", re.I)
+_POST_REGIONAL = re.compile(r"^\s*(?:il|yil|la|le|lo|alli)?\s*(?:anu|aanu|aan|irukken|irukkiren|irukkom|unnanu|unnam|iddini|iddivi|nundi|ninnu|ninnum|irundhu|inda)\b", re.I)
 _FIRST_PERSON = re.compile(r"\b(?:i|we|i'm|im|iam|am|me|myself|my)\b", re.I)
 # stricter forms, used for places outside South India
-_IAM_STRICT = (r"\b(?:i\s*am|i'm|im|iam|i\s+m|we\s*are|we're)\s+(?:currently\s+|now\s+|also\s+|an?\s+\w+\s+)?"
+_IAM_STRICT = (r"\b(?:i\s*am|i'm|im|iam|i\s+m|we\s*are|we're|watching)\s+(?:currently\s+|now\s+|also\s+|an?\s+\w+\s+)?"
                r"(?:in|at|from)\s+(?:the\s+)?$")
 _PRE_STRICT = re.compile(f"(?:{_RESIDE}|{_IAM_STRICT}|{_HERE}|{_IAM_VERB})", re.I)
 _REGIONAL_I_RE = re.compile(_REGIONAL_I, re.I)
-_POST_RESIDES = re.compile(r"^\s*(?:il|yil|la|le|lo|alli)?\s*(?:irukken|irukkiren|irukkom|unnanu|unnam|iddini|iddivi|thamasam|thamasikkunnu)\b", re.I)
+_POST_RESIDES = re.compile(r"^\s*(?:il|yil|la|le|lo|alli)?\s*(?:irukken|irukkiren|irukkom|unnanu|unnam|iddini|iddivi|thamasam|thamasikkunnu|"
+                           r"work\s+pan\w+|work\s+chey\w+|joli\s+chey\w+|job\s+chest\w+)\b", re.I)
+# native script: a first-person verb right after the place ("மதுரையில் இருக்கிறேன்"), or a pronoun before
+# and a being/living/working word after ("ഞാൻ ... ദുബായിൽ ആണ്", "நான் துபாயில் வேலை செய்கிறேன்")
+_POST_NATIVE_1P = re.compile(r"^\S{0,8}\s*(?:இருக்கிறேன்|இருக்கேன்|வசிக்கிறேன்|ఉన్నాను|ఉంటాను|ఉంటున్నాను|ಇದ್ದೇನೆ|ಇದೀನಿ)")
+_POST_NATIVE = re.compile(r"^\S{0,8}\s*(?:வேலை|வசி|சேர்ந்த|ആണ്|താമസ|ജോലി|ఉద్యోగ|పని|ಕೆಲಸ)")
+_NATIVE_I = re.compile(r"நான்|நாங்கள்|ഞാൻ|ഞങ്ങൾ|నేను|మేము|ನಾನು|ನಾವು")
+_RESIDENT_HERE = re.compile(r"^\s*resident\s+here\b", re.I)
 # "Ipo Abudhabi anu, ..." ends the clause: a statement of where they are. "Dubai il aanu nalla
 # investment" goes on to say something about Dubai.
 _POST_COPULA_END = re.compile(r"^\s*(?:il|yil|la|le|lo|alli)?\s*(?:anu|aanu|aan)\s*(?:[,.!?\n]|$)", re.I)
@@ -132,7 +139,7 @@ _FUTURE = re.compile(r"\b(?:get|to|will|would|wanna|gonna)\s+(?:be\s+)?(?:settle
 _ROUTE = re.compile(r"^\s*(?:to|-|–|→|->)\s", re.I)        # "from Chennai to Dubai" is a route, not a home
 
 
-def _self_stated(text, m, allow_bare_from, strict=False):
+def _self_stated(text, m, allow_bare_from, strict=False):   # strict is kept for callers; the test is the same
     """Does the author say this place is where they are?
 
     strict is used for places outside South India, where a wrong "yes" throws a buyer away:
@@ -143,15 +150,16 @@ def _self_stated(text, m, allow_bare_from, strict=False):
     post = text[m.end():m.end() + 22]
     if _NEGATED.search(pre) or _FUTURE.search(pre):
         return False
-    if strict:
-        if _PRE_STRICT.search(pre) or _POST_RESIDES.match(post) or _POST_COPULA_END.match(post):
-            return True
-        if _REGIONAL_I_RE.search(pre) and _POST_REGIONAL.match(post):
-            return True
-        return bool(_POST_SELF.search(post) and _FIRST_PERSON.search(pre))
-    if _PRE_SELF.search(pre) or _POST_REGIONAL.match(post):
+    # The same test for every place. A pronoun near a place is not enough ("naa friend Hyderabad lo
+    # flat konnadu", "guide me in Chennai expo dates"), and neither is a copula that goes on to
+    # describe the place ("Kochi aanu better"): the clause has to say the author is there.
+    if _PRE_STRICT.search(pre) or _POST_RESIDES.match(post) or _POST_COPULA_END.match(post):
         return True
-    if _POST_SELF.search(post) and _FIRST_PERSON.search(pre):
+    if _REGIONAL_I_RE.search(pre) and _POST_REGIONAL.match(post):
+        return True
+    if _POST_NATIVE_1P.search(post) or (_NATIVE_I.search(pre) and _POST_NATIVE.search(post)):
+        return True
+    if _POST_SELF.search(post) and (_FIRST_PERSON.search(pre) or _RESIDENT_HERE.match(post)):
         return True
     return bool(allow_bare_from and _PRE_FROM.search(pre) and not _ROUTE.match(post))
 
@@ -212,6 +220,8 @@ _PURCHASE = [re.compile(p, re.I) for p in L.PURCHASE]
 _NATIVE_NEG = re.compile(L.NATIVE_NEGATION)
 _NOT_PROPERTY = re.compile(L.NOT_PROPERTY, re.I)
 _BOOK_ONLY = re.compile(r"\bbook(?:ing)?\b(?!.*\b(?:buy|buying|invest|investing|purchase|purchasing|own|owning)\b)", re.I)
+_COUNT_OF_PEOPLE = re.compile(r"\b(?:lakhs?|crores?|cr|million|mn)\s+(?:population|people|subscribers|views|viewers)\b", re.I)
+_FOR_RENT = re.compile(r"\b(?:for|on)\s+rent\b(?!\s*out)", re.I)
 _I_BEFORE = re.compile(r"\b(?:i|we|i'm|im|iam|am)\s+(?:\w+\s+){0,2}$", re.I)
 _NEG_BEFORE = re.compile(r"\b(?:no|not|don'?t|never|cannot|can'?t|won'?t|didn'?t)\s+(?:\w+\s+){0,2}$", re.I)
 _QUESTION = re.compile(L.QUESTION, re.I)
@@ -238,11 +248,13 @@ def _first_person_purchase(t):
             before = t[max(0, m.start() - 40):m.start()]
             if _NEG_BEFORE.search(before):
                 continue                                   # "I don't want to buy"
-            if not m.group(0).isascii() and _NATIVE_NEG.search(t[m.end():m.end() + 14]):
+            if not m.group(0).isascii() and _NATIVE_NEG.search(t[m.end():m.end() + 25]):
                 continue                                   # native script "... cannot buy"
             around = t[max(0, m.start() - 28):m.end() + 28]
             if _NOT_PROPERTY.search(around) and not _PROP.search(t):
                 continue                                   # gold, a car, tickets, "Burj Khalifa 😂"
+            if _FOR_RENT.search(t[m.end():m.end() + 30]):
+                continue                                   # "I want a 2 bhk for rent" is a renter
             if _BOOK_ONLY.search(m.group(0)) and not _PROP.search(t):
                 continue                                   # "planning to book tickets"
             if _I_BEFORE.search(before) or not _NOT_ME.search(before):
@@ -256,7 +268,8 @@ def markers(text):
     out = set()
     if _first_person_purchase(t):
         out.add("purchase_intent")
-    if _AMOUNT.search(t) and (_BUDGET_WORD.search(t) or _BUDGET_HAVE.search(t) or _BUDGET_ASK.search(t)):
+    if (_AMOUNT.search(t) and (_BUDGET_WORD.search(t) or _BUDGET_HAVE.search(t) or _BUDGET_ASK.search(t))
+            and not _COUNT_OF_PEOPLE.search(t)):
         out.add("budget")
     if detect_script(t):
         out.add("regional_language_text")

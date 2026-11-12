@@ -135,18 +135,22 @@ def run(signals, *, overrides=None, enrich=None, channel_country=None, reader=No
         funnel["candidate_channels_declaring_a_country_outside_india"] = sum(1 for i in todo if found.get(i, "IN") != "IN")
 
     # 5. classify, then apply manual review decisions
-    applied, used, unsupported = 0, set(), []
+    applied, used, unsupported, refused = 0, set(), [], []
     for p in prospects:
         o = overrides.get(p["id"])
-        if o and o.get("signal"):
-            # what the reviewer read; the rules still classify. A quote that is not in the person's
-            # comments means the decision cannot be checked, so it is not applied at all.
-            if not qualify.apply_review_signal(p, o["signal"], o.get("quote", "")):
+        upgrade = bool(o) and o["status"] in ("strong_signal", "needs_validation")
+        if upgrade:
+            used.add(p["id"])
+            # A decision in someone's favour must say what was read and quote it, and the quote must
+            # be in the person's comments. Otherwise it cannot be checked, so it is not applied.
+            if not (o.get("signal") and o.get("quote") and qualify.apply_review_signal(p, o["signal"], o["quote"])):
                 unsupported.append(p["id"])
-                used.add(p["id"])
                 o = None
         p["status"], p["reason"], p["unverified"] = qualify.classify(p, as_of)
         p["review"] = "automatic"
+        if o and upgrade and (p["is_owner"] or p["any_agent"]):
+            refused.append(p["id"])            # no decision makes a seller or a video's creator a prospect
+            o = None
         if o:
             used.add(p["id"])
             if o["status"] != p["status"]:
@@ -156,6 +160,8 @@ def run(signals, *, overrides=None, enrich=None, channel_country=None, reader=No
             p["status"], p["review"] = o["status"], "manual: " + o["note"]
             applied += 1
     funnel["manual_review_decisions_applied"] = applied
+    if refused:
+        funnel["manual_review_upgrades_refused_seller_or_creator"] = sorted(refused)
     if unsupported:
         funnel["manual_review_quotes_not_found"] = sorted(unsupported)
         log.warning("%d manual review decision(s) not applied: the quote is not in that person's comments", len(unsupported))
@@ -191,8 +197,7 @@ def run(signals, *, overrides=None, enrich=None, channel_country=None, reader=No
     funnel["strong_plus_needs_validation"] = funnel["strong_signal"] + funnel["needs_validation"]
     # the honest answer to "how many genuinely qualify": intent in their own words AND a home they state
     funnel["meet_both_tests_in_their_own_words"] = sum(
-        1 for p in candidates if p["status"] != "reject" and p["tier"] in ("medium", "strong")
-        and p["loc"]["tier"] in ("explicit", "community"))
+        1 for p in candidates if qualify.meets_both(p))
     if cap is not None:
         # An optional sheet limit never drops a qualified prospect: only the oldest rejects go.
         qualified = [p for p in candidates if p["status"] != "reject"]

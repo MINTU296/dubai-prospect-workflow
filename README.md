@@ -13,16 +13,16 @@ Run of 11 November 2026, YouTube only.
 
 | | Count |
 |---|---|
-| Candidates discovered | **218** |
-| Meet both tests in their own words (buying interest and a South India home they state) | **2** |
+| Candidates discovered | **217** |
+| Meet both tests in their own words (a wish to buy now and a South India home they state) | **1** |
 | Strong signal | **0** |
-| Needs validation | **27** |
+| Needs validation | **26** |
 | Rejected | **191** |
 
-**Two people genuinely qualify on both tests, and neither reaches the strong-signal bar.** The other 25 in
-"needs validation" show buying interest in their own words, but nothing they wrote says where they live: they
-are linked to South India only by the language of the video they commented on. This is a working method and a
-short list worth a first look, not a list of leads.
+**One person genuinely qualifies on both tests, and does not reach the strong-signal bar.** The other 25 in
+"needs validation" show buying interest in their own words, or own property and live in Chennai, but for 22 of
+them nothing they wrote says where they live: they are linked to South India only by the language of the video
+they commented on. This is a working method and a short list worth a first look, not a list of leads.
 
 | Deliverable | Where |
 |---|---|
@@ -53,20 +53,20 @@ South India.
 A job title, wealth or a location on its own never qualifies anyone. The full rules are in
 [`docs/DETAILS.md`](docs/DETAILS.md).
 
-**Discovered versus qualified.** 3,226 comments from 2,612 people → **218 candidates** → **27 need validation**,
-of whom **2 meet both tests**; 0 strong signal; 191 rejected.
+**Discovered versus qualified.** 3,226 comments from 2,612 people → **217 candidates** → **26 need validation**,
+of whom **1 meets both tests**; 0 strong signal; 191 rejected.
 
 **Limitations.**
 
-- **Location is the weak link.** Only 2 of the 27 say where they live (both Chennai). For the rest the only
-  link is the video's language, and a Tamil or Malayalam speaker may well live in the Gulf: of the candidates
+- **Location is the weak link.** Only 2 of the 26 say where they live (both Chennai), and one of those is an
+  existing owner, not someone buying now. For 22 the only link is the video's language, and a Tamil or Malayalam speaker may well live in the Gulf: of the candidates
   whose channel declares a country, about half declare one outside India.
 - **Evidence per person is thin.** Most rows are one short comment. Identity, finances and residence are
   unverified and listed per row.
-- **Concentrated source.** YouTube only. 96 of the 218 candidates come from one channel and 130 from three
-  videos. No one is linked to Karnataka.
+- **Concentrated source.** YouTube only. 97 of the 217 candidates come from one channel and 130 from three
+  videos. No one who needs validation is linked to Karnataka.
 - **Keyword rules miss regional-language buyers.** Against an independent read they found fewer than half of
-  the people showing buying intent. Six of the 27 were added by a recorded review decision.
+  the people showing buying intent. Six of the 26 were added by a recorded review decision.
 - **Built with an AI coding assistant**, as the brief allows, including the review decisions. They are one
   reviewer's judgement and have not been checked by a speaker of these languages.
 
@@ -77,15 +77,15 @@ flowchart TD
     A["YouTube Data API<br/>54 searches for Dubai-property videos"] --> B["Keep videos about Dubai property<br/>in Tamil, Malayalam, Telugu or Kannada"]
     B --> C["Read public comments<br/>3,226 comments from 2,612 people"]
     C --> D["Clean and redact<br/>phones, e-mails, links removed"]
-    D --> E["One record per person<br/>2,173 with a comment in scope"]
+    D --> E["One record per person<br/>2,172 under a video in scope"]
     E --> F{"Did they ask or say something<br/>a seller could act on?"}
     F -->|"No: 1,928 people, plus 27 video creators"| X["Removed as irrelevant<br/>counted, not listed"]
-    F -->|Yes| G["218 candidates"]
+    F -->|Yes| G["217 candidates"]
     G --> H["Score buying intent and South India evidence<br/>look up the country each channel declares"]
     H --> I["Automatic status and reason"]
     I --> J["Review decisions, recorded in files<br/>each addition must quote the comment"]
     J --> K["0 strong signal"]
-    J --> L["27 needs validation<br/>2 meet both tests"]
+    J --> L["26 needs validation<br/>1 meets both tests"]
     J --> M["191 rejected"]
     K --> N["Export: CSV, XLSX, shortlist, summary, manifest"]
     L --> N
@@ -164,7 +164,7 @@ pip install -r requirements-dev.txt
 python -m pytest tests -q
 ```
 
-225 tests pass and one is skipped (it needs the optional `anthropic` package); none needs a key or the network.
+248 tests pass and one is skipped (it needs the optional `anthropic` package); none needs a key or the network.
 
 | Command | What it does |
 |---|---|
@@ -186,42 +186,43 @@ author's cache; `run_manifest.json` records the commit, settings and checksums.
 |---|---|
 | Public comments read | 3,226 |
 | People who wrote them | 2,612 |
-| People with a comment about Dubai property | 2,173 |
+| People with a comment under a Dubai-property video that is short or on topic | 2,172 |
 | Video creators' own comments removed | 27 |
 | Removed as irrelevant (asked nothing, no wish to buy) | 1,928 |
-| **Candidates discovered** | **218** |
+| **Candidates discovered** | **217** |
 | `strong_signal` | **0** |
-| `needs_validation` | **27** |
-| ...of whom meet both tests in their own words | **2** |
+| `needs_validation` | **26** |
+| ...of whom meet both tests in their own words | **1** |
 | `reject` | **191** |
 
-**The 27 who need validation.** Eleven say they want to buy or invest (two state an amount: 25 lakh and
-3 crore), one says he already bought and lives in Chennai, and fifteen asked a buying question such as "How
-much down payment?". Twenty-one were found by the rules and six by a review decision. Location: two state
-Chennai, one names a Hyderabad locality without calling it home, and 24 are linked only by video language
-(Tamil 16, Telugu 4, Malayalam 4). Fourteen of the 27 commented on one Tamil realtor's channel.
+**The 26 who need validation.** Twelve say they want to buy or invest (two state an amount: 25 lakh and
+3 crore), twelve asked a buying question such as "How much down payment?", one says he already bought and
+lives in Chennai, and one wrote "Interested" under a video about a Dubai property show in Hyderabad. Twenty
+were found by the rules and six by a review decision. Location: two state Chennai, one names a Hyderabad
+locality without calling it home, one is tied to Hyderabad only by that event video, and 22 are linked only by
+video language (Tamil 16, Malayalam 3, Telugu 3). Fourteen of the 26 commented on one Tamil realtor's channel.
 
 **The 191 rejected.**
 
 | Reason | Count |
 |---|---|
-| Only asked for a price, details or a contact, and gave no location | 132 |
+| Only asked for a price, details or a contact, and gave no location | 130 |
 | Commented under a video that is about a villa in Ajman, not Dubai | 18 |
-| Seller or agent, by what they wrote (7) or by a business-name handle (6) | 13 |
-| Replied to another viewer rather than the creator | 7 |
-| Rejected by a review decision | 9 |
+| Seller or agent, by what they wrote (6) or by a business-name handle (6) | 12 |
+| Replied to another viewer rather than the creator | 6 |
+| Rejected by a review decision | 13 |
 | Channel declares a country outside India | 5 |
 | Says they live elsewhere, owner with no sign of buying again, advice-giver, critic, job-seeker, no South India link | 7 |
 
-**The shortlist.** Ranked by a stated wish to buy and its specifics, then by location the person states
-themselves. Only the first and third meet both tests; the second names a Hyderabad locality but does not say
-he lives there; the last two are located only by video language. Only the first shows both a wish to buy
-now and a stated home; the third is an existing owner, not someone who says he is buying again.
+**The shortlist.** Anyone who meets both tests comes first; after that the order is a stated wish to buy and
+its specifics, then location the person states themselves. Only the first meets both tests. The second names a
+Hyderabad locality but does not say he lives there, the third states a 25-lakh budget, the fourth says he is in
+India, and the fifth is an existing owner in Chennai, not someone who says he is buying again.
 
 **Why nobody reaches strong signal.** It needs a wish to buy, a specific, and a stated South India home in the
 same public record. People who comment on these videos ask one short question and rarely say where they live.
 Three further checks for location were measured and found nearly empty: the country a channel declares (17 of
-218 declare one), the channel description (3 candidates named a South India place, all three rejected for
+217 declare one), the channel description (3 candidates named a South India place, all three rejected for
 other reasons), and an independent read of every comment for a stated home (10 found, none with buying
 intent).
 
@@ -230,15 +231,18 @@ intent).
 - **Independent read.** Six AI readers labelled 1,552 commenters (the data at the time) without seeing the
   rules' verdicts, quoting the comment for every label. The rules had found 34 of the 79 people in whom the
   readers saw buying intent. General rules were added for the gaps that generalise.
-- **Two independent reviews** of the results and the code then found real faults, now fixed:
+- **Three independent reviews** of the results and the code then found real faults, now fixed:
   - about a quarter of the rows then listed as needing validation did not survive a strict read, including
     several added by review decision, and one source video was about Ajman, not Dubai;
-  - the classifier let a renter or a seller with a budget through as a strong signal, and rejected buyers who
-    named Dubai as where the flat is ("naan Dubai la oru 2BHK vaanganum") as if they lived there;
-  - the shortlist ranked an existing owner above people with a budget, a timeline or a comparison;
-  - the README called 46 people "qualified" when two met both tests.
+  - the classifier let renters, sellers and adverts through, read denials in Tamil and Malayalam as intent,
+    and rejected buyers who named Dubai as where the flat is as if they lived there;
+  - a home was sometimes invented: a friend's city, or the Malayalam word for "years", which is also the name
+    of the city Kollam;
+  - a review decision could qualify someone without quoting them; it now cannot, and can never lift a seller;
+  - the README called 46 people "qualified" when one met both tests.
 
-  Every input those reviews found misclassified is now a test.
+  Every input those reviews found misclassified is now a test. Each review still found new phrasings the
+  keyword rules got wrong, so expect more: that is the limit of keyword rules.
 - **Not checked.** No speaker of Tamil, Malayalam, Telugu or Kannada has read the regional-language rows. The
   roughly 600 commenters added by the last run were not part of the independent read. The optional AI reading
   stage has never been run against the live API.
@@ -251,7 +255,7 @@ intent).
   is kept, because it is part of the public comment.
 - **Minimal lookups.** For a candidate's channel only the declared country code is requested and cached.
 - **Retention.** Cached text older than 30 days is deleted on the next online run; `--purge-cache` deletes it
-  at once. The committed `output/` holds 218 public handles with a judgement against each, exists for this
+  at once. The committed `output/` holds 217 public handles with a judgement against each, exists for this
   evaluation only, and should be deleted afterwards.
 - **Removal on request.** A row with status `exclude` in `review/manual_review.csv` removes that person from
   every output.

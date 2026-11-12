@@ -6,7 +6,7 @@ SOUTH_PLACES = {
         "": ["karnataka", "ಕರ್ನಾಟಕ"],
         "Bengaluru": ["bangalore", "bengaluru", "banglore", "bangaluru", "blr", "whitefield",
                       "koramangala", "indiranagar", "electronic city", "hsr layout", "sarjapur",
-                      "ಬೆಂಗಳೂರು"],
+                      "ಬೆಂಗಳೂರು", "ಬೆಂಗಳೂರಿ"],
         "Mysuru": ["mysore", "mysuru", "ಮೈಸೂರು"],
         "Mangaluru": ["mangalore", "mangaluru", "ಮಂಗಳೂರು"],
         "Hubballi-Dharwad": ["hubli", "hubballi", "dharwad", "ಹುಬ್ಬಳ್ಳಿ"],
@@ -24,7 +24,7 @@ SOUTH_PLACES = {
         "Kozhikode": ["calicut", "kozhikode", "കോഴിക്കോട്"],
         "Thrissur": ["thrissur", "trichur", "തൃശൂർ"],
         "Kannur": ["kannur", "കണ്ണൂർ"],
-        "Kollam": ["kollam", "കൊല്ലം"],
+        "Kollam": ["kollam"],          # the Malayalam spelling also means "years", so it is not matched
         "Malappuram": ["malappuram", "മലപ്പുറം"],
         "Kottayam": ["kottayam", "കോട്ടയം"],
         "Palakkad": ["palakkad", "palghat", "പാലക്കാട്"],
@@ -79,6 +79,7 @@ ABROAD_PLACES = [
     "qatar", "doha", "saudi", "saudhi", "saudia", "ksa", "riyadh", "jeddah", "kuwait", "oman", "muscat", "bahrain", "gulf", "gcc",
     "usa", "america", "uk", "london", "canada", "toronto", "australia", "sydney", "melbourne",
     "singapore", "malaysia", "germany", "europe", "ireland", "netherlands", "new zealand", "sri lanka",
+    "துபாய", "சவுதி", "குவைத்", "கத்தார்", "ദുബായ", "ദുബൈ", "സൗദി", "ഖത്തർ", "കുവൈ", "అబుదాబి", "దుబాయ", "సౌదీ", "ದುಬೈ", "ಸೌದಿ",
 ]
 OTHER_INDIA_PLACES = [
     "mumbai", "bombay", "delhi", "new delhi", "ncr", "gurgaon", "gurugram", "noida", "pune", "kolkata",
@@ -149,7 +150,7 @@ PURCHASE = [
     r"ಖರೀದಿ|ಕೊಳ್ಳಬೇಕು|ತಗೊಳ್ಳ|ಹೂಡಿಕೆ ಮಾಡ",
 ]
 # a native-script buying word followed by one of these is a denial ("cannot buy"), not intent
-NATIVE_NEGATION = r"പറ്റില്ല|കഴിയില്ല|വേണ്ട|முடியாது|வேண்டாம்|கூடாது|కొనలేం|వద్దు|కుదరదు|ಬೇಡ|ಆಗಲ್ಲ|ಸಾಧ್ಯವಿಲ್ಲ"
+NATIVE_NEGATION = r"இல்லை|ഇല്ല|లేదు|ಇಲ್ಲ|പറ്റില്ല|കഴിയില്ല|വേണ്ട|முடியாது|வேண்டாம்|கூடாது|కొనలేం|వద్దు|కుదరదు|ಬೇಡ|ಆಗಲ್ಲ|ಸಾಧ್ಯವಿಲ್ಲ"
 BUDGET_WORD = r"\bbudget\b|பட்ஜெட்|ബജറ്റ്|బడ్జెట్|ಬಜೆಟ್"
 # first-person capacity: "I have 80 lakhs", "we can invest 1 cr"
 BUDGET_HAVE = r"\b(?:i|we)\s+(?:have|got|can\s+(?:invest|afford|spend|pay|arrange|put)|am\s+ready\s+with|are\s+ready\s+with)\b[^.?!\n]{0,40}?"
@@ -171,7 +172,7 @@ REQUIREMENT = [
 PROCESS = [
     r"\b(?:lrs|golden\s+visa|residen(?:ce|cy)\s+visa|investor\s+visa|fema|remit\w*|home\s+loan|mortgage|"
     r"bank\s+loan|title\s+deed|dld|oqood|service\s+charges?|rental\s+(?:yield|income|returns?)|roi|"
-    r"return\s+on\s+investment|resale|capital\s+appreciation|freehold|tds|vat|"
+    r"return\s+on\s+investment|yield|resale|capital\s+appreciation|freehold|tds|vat|"
     # tax only when it is about the property or the money moved, not "Germany has high tax"
     r"(?:property|rental|capital\s+gains?|income|inheritance)\s+tax\w*|tax[\s-]?free|"
     r"tax\w*\s+(?:on|for|in)\s+(?:the\s+)?(?:rent\w*|propert\w+|sale|resale|purchase|profits?|india|dubai|uae)|"
@@ -207,7 +208,7 @@ ENQUIRY_TOPIC = (r"\bdetails?\b|\bprice\b|\bcost\b(?!\s+of\s+living)|\bhow\s+muc
                  r"|(?<!கோ)விலை|விவரம்|விவரங்கள்|ஆர்வம்|വില(?!്ല)|വിശദാംശ|താല്പര്യ|താൽപ്പര്യ|ధర|వివరాలు|ఆసక్తి|ಬೆಲೆ|ವಿವರ|ಆಸಕ್ತಿ")
 REQUEST_CUE = (r"\bwhat(?:'s|\s+is|\s+are)\b|\b(?:pls|plz|please|kindly|send|share|tell|give|need|want|know|sollunga|sollu|parayamo|parayu|"
                r"cheppandi|cheppu|heli|tharumo|tharamo|kudunga|ivvandi)\b")
-ENQUIRY_MAX_WORDS = 15          # a request is short; a long text that happens to say "price" is commentary
+ENQUIRY_MAX_WORDS = 18          # a request is short; a long text that happens to say "price" is commentary
 
 # words that turn a mention of a buying topic into a question about it
 # A real question: a question mark, a sentence that opens with a question word, or "how much"/"which"
@@ -233,7 +234,7 @@ AGENT = [
     r"|\breal\s*estate\s+lo\s+(?:job|work)\b|\bget\s+in\s+touch\s+with\s+me\b|\bif\s+you\s+need\s+any\s+(?:assistance|help)\b",
     r"\bwe\s+have\s+(?:\w+\s+){0,3}?(?:plots?|flats?|apartments?|villas?|projects?|properties|units|bhk)\b",
     # an advert phrased as a question: "Looking to invest in Dubai? Contact us today!"
-    r"\b(?:contact|call|whatsapp|message|reach)\s+us\b|\bbest\s+deals?\b|\bi\s+have\s+a\s+client\b|\binterested\s+people\s+(?:message|call|contact|dm)\b",
+    r"\bi\s+can\s+get\s+you\b|\bwe\s+at\s+\w+|\b(?:contact|call|whatsapp|message|reach)\s+us\b|\bbest\s+deals?\b|\bi\s+have\s+a\s+client\b|\binterested\s+people\s+(?:message|call|contact|dm)\b",
     r"\b(?:looking|want|planning|interested)\s+to\s+(?:buy|invest)\b[^?\n]{0,60}\?\s*(?:call|contact|whatsapp|dm|message|reach)\b",
     # "DM for advice and enquiries" is a seller; "looking for advice" is a buyer
     r"\b(?:dm|call|contact|whatsapp|message)\b[^\n]{0,40}?\bfor\s+(?:advi[cs]e|enquir\w+|inquir\w+)\b"

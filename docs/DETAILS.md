@@ -33,7 +33,8 @@ Disqualifiers, checked in this order:
 6. Buying in India, not Dubai.
 7. They say, or their channel declares, that they live outside South India, and they state no South India base.
 8. An existing owner with no sign of buying again and no stated South India base.
-9. Only a price, details or contact request, with no stated location.
+9. Only a price, details or contact request, with no stated location and not under a video about an event
+   held in a South India city.
 
 A job title, wealth or a location on its own never produces a positive status.
 
@@ -103,15 +104,16 @@ results do not use it.
   video's own creator and people who only comment on the topic are counted and removed. Every candidate is
   listed; there is no cap.
 - **Dedupe.** Exact repeat texts are collapsed, then all comments by one channel become one prospect.
-- **Shortlist.** Up to five non-rejected prospects by a score: a stated wish to buy counts most, then each
-  specific (budget, timeline, comparison), then location the person states themselves, with a signal older than
-  18 months marked down. Someone who meets both tests in their own words comes first. A place that is only
-  mentioned, or inferred from a video, adds little or nothing.
+- **Shortlist.** Up to five non-rejected prospects. Anyone who meets both tests (a wish to buy now and a home
+  they state) comes first. After that the order is a score: a stated wish to buy counts most, then each
+  specific (budget, timeline, comparison), then location the person states themselves, with a signal older
+  than 18 months marked down. An existing owner counts for less than someone buying now.
 - **Review decisions.** After the automatic run every non-rejected row was read again, and decisions are
-  recorded in [`review/manual_review.csv`](../review/manual_review.csv). A decision that adds a person must give
-  the exact quote it rests on; if that quote is not in the person's comments the decision is not applied.
-  The rules still classify an added person, so every disqualifier keeps applying. These decisions were made
-  during development with an AI assistant and are one reviewer's judgement.
+  recorded in [`review/manual_review.csv`](../review/manual_review.csv). A decision in someone's favour must
+  name the signal and give the exact quote it rests on; if either is missing, or the quote is not in the
+  person's comments, the decision is not applied. No decision can turn a seller or a video's creator into a
+  prospect. The rules still classify an added person. These decisions were made during development with an
+  AI assistant and are one reviewer's judgement.
 - **Video decisions.** [`review/video_review.csv`](../review/video_review.csv) lists videos found not to be
   about Dubai property. One is listed: a vlog about a villa in Ajman.
 
@@ -131,7 +133,7 @@ results do not use it.
 | `evidence_of_interest` | The person's own words. |
 | `intent_level`, `intent_markers` | Strong, medium or weak, and the markers found. |
 | `qualification_status`, `qualification_reason` | The status and why, including what to confirm. |
-| `meets_both_tests` | `yes` only when the row is not rejected, shows intent in the person's own words, and has a home they state. |
+| `meets_both_tests` | `yes` only when the row is not rejected, the person says they want to buy or asks a buying question, and they state a South India home. A past purchase alone does not count. |
 | `unverified_information` | What remains unverified for this person. |
 | `review` | `automatic`, or the manual reviewer's note. |
 | `ai_reading` | What the optional AI reading stage saw: intent, quote, stated home, English gloss. Blank when the stage was not run. |
@@ -208,7 +210,7 @@ warning and uses the keyword rules and any cached readings.
 | Malformed rows, missing author or date | Skipped and counted. |
 | Mis-edited `config.py`, bad arguments | Rejected at start with exit code 2. |
 
-The 226 tests cover the rules on realistic English, romanised and native-script phrasing, text cleaning, the
+The 249 tests cover the rules on realistic English, romanised and native-script phrasing, text cleaning, the
 cache, the YouTube collector end to end against a stand-in API, the AI reading stage against a stand-in, the
 pipeline and the export. One test needs the optional `anthropic` package and is skipped without it. They are written by the same author as the rules, so they show the rules do what was
 intended, not that the intent is right. The two independent reviews described in the README are the check on

@@ -487,10 +487,12 @@ def test_channel_country_lookup_keeps_older_answers_when_the_api_fails(tmp_path,
     assert youtube.channel_countries("k", tmp_path, ["UC1"])[0] == {"UC1": "OM"}
     monkeypatch.setattr(requests.Session, "get", lambda self, url, **kw: gerr(403, "quotaExceeded"))
     assert youtube.channel_countries("k", tmp_path, ["UC1", "UC2"], refresh=True)[0] == {"UC1": "OM"}
-    # entries past the retention limit are dropped
+    # an offline re-run never expires or rewrites what is stored, however old: it must reproduce
     old = {"UC1": {"c": "OM", "t": time.time() - (config.CACHE_RETENTION_DAYS + 1) * 86400}}
     cache.write_json_atomic(tmp_path / "channel_country_map.json", old)
-    assert youtube.channel_countries("", tmp_path, ["UC1"], offline=True)[0] == {}
+    assert youtube.channel_countries("", tmp_path, ["UC1"], offline=True)[0] == {"UC1": "OM"}
+    assert cache.read_json(tmp_path / "channel_country_map.json") == old
+
 
 
 # ---- .env file ---------------------------------------------------------------------------
@@ -652,21 +654,34 @@ def test_ai_read_flag_without_a_key_uses_cached_readings_only(tmp_path, monkeypa
     assert code == 3                                         # nothing collected; and no crash from the AI stage
 
 
-def test_a_reviewer_can_qualify_someone_no_rule_matched():
-    signals = reading_signals()
-    base, _, _ = pipeline.run(signals, as_of="2026-11-11")
+def test_a_reviewer_can_qualify_someone_no_rule_matched_only_with_a_verified_quote():
+    base, _, _ = pipeline.run(reading_signals(), as_of="2026-11-11")
     pid = "YO-" + __import__("hashlib").sha1(b"missed").hexdigest()[:8]
-    cands, _, funnel = pipeline.run(reading_signals(), overrides={pid: {"status": "needs_validation", "note": "asks about costs after buying"}}, as_of="2026-11-11")
-    got = by_author(cands)
-    assert "missed" not in by_author(base) and got["missed"]["status"] == "needs_validation" and "Manual review" in got["missed"]["reason"]
-    assert funnel["candidates_discovered"] == len(base) + 1
-    assert got["missed"]["tier"] == ""                                       # no signal recorded: the note is all there is
-    # with the signal recorded, the sheet shows a real intent level and the rules still classify the row
-    cands, _, _ = pipeline.run(reading_signals(), overrides={pid: {"status": "needs_validation", "note": "asks about costs after buying",
-                                                                   "signal": "buying_question"}}, as_of="2026-11-11")
+    decision = {"status": "needs_validation", "note": "asks about costs after buying", "signal": "buying_question",
+                "quote": "flat vaangi kayinaal enthoke expense varum"}
+    cands, _, funnel = pipeline.run(reading_signals(), overrides={pid: decision}, as_of="2026-11-11")
     m = by_author(cands)["missed"]
-    assert m["tier"] == "medium" and "found_on_review" in m["markers"] and "read by the reviewer" in m["reason"]
-    assert qualify.to_row(m)["intent_level"] == "medium" and m["review"].startswith("manual:")
+    assert "missed" not in by_author(base) and funnel["candidates_discovered"] == len(base) + 1
+    assert m["status"] == "needs_validation" and m["tier"] == "medium" and "found_on_review" in m["markers"]
+    assert "read by the reviewer" in m["reason"] and m["review"].startswith("manual:") and qualify.to_row(m)["intent_level"] == "medium"
+    # without a signal, without a quote, or with a quote the person never wrote, nothing is applied
+    for broken in (dict(decision, quote=""), dict(decision, signal=""), dict(decision, quote="I will buy tomorrow")):
+        cands, _, funnel = pipeline.run(reading_signals(), overrides={pid: broken}, as_of="2026-11-11")
+        assert "missed" not in by_author(cands) and funnel["manual_review_quotes_not_found"] == [pid]
+
+
+def test_no_review_decision_turns_a_seller_or_a_creator_into_a_prospect():
+    signals = [ytsig(1, "Get in touch with me, I am a Telugu realtor in UAE. Flats available", author="seller"),
+               ytsig(2, "Thanks for watching, flats available in JVC", author="creator", is_owner=True)]
+    ids = {a: "YO-" + __import__("hashlib").sha1(a.encode()).hexdigest()[:8] for a in ("seller", "creator")}
+    ov = {ids["seller"]: {"status": "strong_signal", "note": "x", "signal": "wants_to_buy", "quote": "Flats available"},
+          ids["creator"]: {"status": "needs_validation", "note": "x", "signal": "wants_to_buy", "quote": "flats available in JVC"}}
+    cands, _, funnel = pipeline.run(signals, overrides=ov, as_of="2026-11-11")
+    assert [c["status"] for c in cands] == ["reject"] and len(funnel["manual_review_upgrades_refused_seller_or_creator"]) == 2
+    # a reviewer can still reject anyone, with no quote needed
+    cands, _, _ = pipeline.run([ytsig(3, "I want to buy an apartment in Dubai", author="b")],
+                               overrides={"YO-" + __import__("hashlib").sha1(b"b").hexdigest()[:8]: {"status": "reject", "note": "joke in context", "signal": "", "quote": ""}}, as_of="2026-11-11")
+    assert cands[0]["status"] == "reject" and cands[0]["reason"].startswith("[Manual review] joke in context")
 
 
 def test_review_file_signal_column_is_optional_and_checked(tmp_path):
@@ -840,3 +855,10 @@ def test_config_validation_checks_the_remaining_numeric_settings(monkeypatch):
     monkeypatch.setattr(config, "YOUTUBE_MAX_VIDEOS", "many")
     monkeypatch.setattr(config, "CACHE_RETENTION_DAYS", -5)
     assert len(config.validate()) == 3
+
+
+def test_offline_rerun_does_not_depend_on_the_clock(tmp_path, monkeypatch):
+    stored = {"UC1": {"c": "AE", "t": 1.0}}                                   # written long ago
+    cache.write_json_atomic(tmp_path / "channel_country_map.json", stored)
+    assert youtube.channel_countries("", tmp_path, ["UC1"], offline=True) == ({"UC1": "AE"}, 0)
+    assert cache.read_json(tmp_path / "channel_country_map.json") == stored

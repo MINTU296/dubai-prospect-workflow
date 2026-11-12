@@ -437,3 +437,51 @@ def test_shortlist_ranks_forward_intent_with_specifics_above_bare_questions_and_
     owner_here = rank("I am living in Chennai. I bought a flat there")
     stale = rank("I want to buy a 1BHK, my budget is 60 lakhs", date="2025-02-01")
     assert both > specific > bare > question and both > owner_here > question and specific > stale
+
+
+# ---- inputs a third independent judge found misclassified ---------------------------------
+@pytest.mark.parametrize("text", [
+    "I am from Kochi. I want a 2 bhk for rent in JVC, budget 80k AED per year", "I want a 2 bhk for rent in JVC",
+    "Planning to buy in Dubai? I can get you 2BHK in JVC at 65 lakhs with 1% payment plan. I am based in Chennai.",
+    "Looking to invest in Dubai? We at ABC Realty Chennai will guide you",
+    "எனக்கு துபாயில் வீடு வாங்க ஆசை இல்லை. நான் மதுரையில் இருக்கிறேன்",          # no wish to buy
+    "ദുബായിൽ ഫ്ലാറ്റ് വാങ്ങാൻ ഞാൻ ഇല്ല, എല്ലാം തട്ടിപ്പാണ്",                        # I won't buy
+    "ഞാൻ 5 കൊല്ലം ആയി ദുബായിൽ ആണ്. ഒരു ഫ്ലാറ്റ് വാങ്ങണം",                       # five years in Dubai
+    "நான் துபாயில் வேலை செய்கிறேன். இங்கே ஒரு வீடு வாங்க வேண்டும்",               # works in Dubai
+    "Naan Saudi la work panren, Dubai la property vaanganum", "My budget is 5 crore population lol"])
+def test_renters_adverts_denials_and_gulf_residents_in_any_script_do_not_qualify(text):
+    assert run(yt(text))["status"] == "reject", text
+
+
+@pytest.mark.parametrize("text,tier,city", [
+    ("Naa friend Hyderabad lo flat konnadu, nenu Dubai lo konali anukuntunna", "mention", "Hyderabad"),   # the friend's city
+    ("Kochi aanu better, Dubai il flat vangan pattumo?", "mention", "Kochi"),
+    ("Please guide me in Chennai expo dates, I want to buy", "mention", "Chennai"),
+    ("ഞാൻ 5 കൊല്ലം ആയി ഇവിടെ. ഒരു ഫ്ലാറ്റ് വാങ്ങണം", "", ""),                    # "years", not the city Kollam
+    ("ನಾನು ಬೆಂಗಳೂರಿನಲ್ಲಿ ಇದ್ದೇನೆ. ದುಬೈನಲ್ಲಿ ಫ್ಲಾಟ್ ಖರೀದಿ ಮಾಡಬೇಕು", "explicit", "Bengaluru"),
+    ("Bengaluru resident here. Seriously considering buying a Dubai apartment", "explicit", "Bengaluru"),
+    ("naan Madurai la irukken, Dubai la oru flat vaanganum", "explicit", "Madurai"),
+    ("njan Kochi il aanu. Dubai il flat vangan pattumo?", "explicit", "Kochi")])
+def test_a_home_is_only_what_the_author_says_is_their_own(text, tier, city):
+    loc = textsig.find_location(text)
+    assert (loc["tier"], loc["city"]) == (tier, city), text
+
+
+def test_a_question_about_yield_after_buying_is_a_buying_question():
+    p = run(yt("I live in Bangalore. If I buy a flat and rent it out, what yield can I get?"))
+    assert p["status"] == "needs_validation" and p["loc"]["tier"] == "explicit"
+
+
+def test_an_enquiry_under_a_south_india_event_video_is_worth_validating():
+    s = yt("Interested", title="Dubai Property Show in Hyderabad", lang="")
+    s["context_city"], s["context_state"] = "Hyderabad", "Telangana"
+    assert run(s)["status"] == "needs_validation" and run(s)["loc"]["tier"] == "context"
+    assert run(yt("Interested"))["status"] == "reject"                      # language alone is not enough for a bare enquiry
+
+
+def test_meeting_both_tests_needs_a_wish_to_buy_now_and_those_rows_lead_the_shortlist():
+    owner = run(yt("I am living in Chennai. I bought a flat there"))
+    buyer = run(yt("I'm in Chennai. I want to invest, please guide"))
+    specific = run(yt("I want to buy a 1BHK, my budget is 60 lakhs, down payment how much?"))
+    assert (qualify.meets_both(owner), qualify.meets_both(buyer), qualify.meets_both(specific)) == (False, True, False)
+    assert qualify.rank_key(buyer) > qualify.rank_key(specific) > qualify.rank_key(owner)
