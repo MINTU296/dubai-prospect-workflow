@@ -1,7 +1,7 @@
 {
-  "generated_at_utc": "2026-11-11T23:27:56Z",
+  "generated_at_utc": "2026-11-12T00:02:31Z",
   "as_of": "2026-11-11",
-  "code_commit": "ce5da13",
+  "code_commit": "97cbba4",
   "code_had_uncommitted_changes": false,
   "settings": {
     "SIGNAL_AFTER": "2025-01-01",
@@ -23,27 +23,27 @@
     "youtube_rows": 3226,
     "invalid_or_repeated_records_dropped": 0,
     "unique_commenters": 2612,
-    "records_in_a_dubai_property_context": 2660,
+    "records_in_a_dubai_property_context": 2659,
     "duplicate_records_collapsed": 153,
-    "unique_authors_about_dubai_property": 2173,
+    "unique_authors_about_dubai_property": 2172,
     "records_merged_into_existing_author": 442,
-    "candidate_channels_declaring_a_country": "17 of 218",
+    "candidate_channels_declaring_a_country": "17 of 217",
     "candidate_channels_declaring_a_country_outside_india": 9,
-    "manual_review_decisions_applied": 15,
+    "manual_review_decisions_applied": 19,
     "video_creators_removed": 27,
     "irrelevant_authors_removed_no_signal": 1928,
-    "candidates_discovered": 218,
+    "candidates_discovered": 217,
     "candidates_under_videos_not_about_dubai": 19,
     "strong_signal": 0,
-    "needs_validation": 27,
+    "needs_validation": 26,
     "reject": 191,
-    "strong_plus_needs_validation": 27,
-    "meet_both_tests_in_their_own_words": 2,
-    "candidates_in_sheet": 218
+    "strong_plus_needs_validation": 26,
+    "meet_both_tests_in_their_own_words": 1,
+    "candidates_in_sheet": 217
   },
   "sha256": {
-    "prospects_all.csv": "62dce6771ea569ba99ebdc43c746ae5618638ab9d28753d6b86132ba25e5c817",
-    "shortlist_top5.csv": "7e85f86019046b374145df39933d5ad60557b4ac4f14973e52dd9919c7063ac9",
-    "summary.md": "4e4b448431541f54a15e9875313e6a66da807ac63acd2a29bdb5acc1a03a5a0c"
+    "prospects_all.csv": "cc95359bb6b40934d0aa04ae15b108ba07ec55ebfad902bc018e8823a8610433",
+    "shortlist_top5.csv": "cab6f9d56324bde52f6a5aba563c2a59d3c487c1320632cb61c626df28b0b816",
+    "summary.md": "5c4324c149a55e069ed0ffa8c296adb3c44e687a20947a46ea6edbfceec91597"
   }
 }
