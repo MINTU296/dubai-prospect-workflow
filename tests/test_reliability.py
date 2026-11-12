@@ -10,7 +10,6 @@ import random
 import sys
 import time
 import unicodedata
-from datetime import date
 
 import pytest
 import requests

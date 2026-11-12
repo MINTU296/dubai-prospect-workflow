@@ -187,13 +187,14 @@ def main(argv=None):
         log.error("nothing was collected (no cache, no network, or no API access) - existing outputs left untouched")
         return 3
 
-    channel_country, extra_units = None, [0]
-    if not a.skip_youtube and config.YOUTUBE_CHANNEL_COUNTRY:
-        def channel_country(ids):
-            found, units = youtube.channel_countries(yt_key, cache_dir / "youtube", ids, offline=not yt_live,
-                                                     refresh=a.refresh and yt_live)
-            extra_units[0] += units
-            return found
+    extra_units = [0]
+
+    def lookup_countries(ids):
+        found, units = youtube.channel_countries(yt_key, cache_dir / "youtube", ids, offline=not yt_live,
+                                                 refresh=a.refresh and yt_live)
+        extra_units[0] += units
+        return found
+    channel_country = lookup_countries if (not a.skip_youtube and config.YOUTUBE_CHANNEL_COUNTRY) else None
 
     reader = None
     if a.ai_read:
